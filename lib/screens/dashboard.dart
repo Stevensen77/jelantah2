@@ -72,6 +72,8 @@ class _DashboardState extends State<Dashboard> {
   var estimate_volume = [];
   var estimasi = [];
   var status = [];
+  var longitude = [];
+  var latitude = [];
 
   signOut() {
     setState(() {
@@ -106,6 +108,8 @@ class _DashboardState extends State<Dashboard> {
         estimate_volume.add(
             data['pickup_orders']['data'][i]['estimate_volume'].toString());
         status.add(data['pickup_orders']['data'][i]['status']);
+        latitude.add(data['pickup_orders']['data'][i]['latitude']);
+        longitude.add(data['pickup_orders']['data'][i]['longitude']);
       });
     }
   }
@@ -324,7 +328,6 @@ class _DashboardState extends State<Dashboard> {
                                 color: Colors.blue,
                               ),
                             ),
-                            padding: EdgeInsets.all(15.0),
                           )
                         ],
                       ),
@@ -341,14 +344,15 @@ class _DashboardState extends State<Dashboard> {
                           children: [
                             for (var i = 0; i < id.length; i++)
                               RC_order(
-                                orderid: pickup_order_no[i],
-                                nama_customer: nama_customer[i],
-                                driver_id: driver_id[i],
-                                alamat: address[i],
-                                estimasi: pickup_date[i],
-                                status: status[i],
-                                volume: estimate_volume[i],
-                              ),
+                                  orderid: pickup_order_no[i],
+                                  nama_customer: nama_customer[i],
+                                  driver_id: driver_id[i],
+                                  alamat: address[i],
+                                  estimasi: pickup_date[i],
+                                  status: status[i],
+                                  volume: estimate_volume[i],
+                                  latitude: latitude[i],
+                                  longitude: longitude[i]),
                           ],
                         ),
                       ),
@@ -603,9 +607,18 @@ class RC_order extends StatelessWidget {
       required this.volume,
       required this.estimasi,
       required this.nama_customer,
-      required this.driver_id});
+      required this.driver_id,
+      required this.latitude,
+      required this.longitude});
 
-  String orderid, alamat, estimasi, status, volume, nama_customer;
+  String orderid,
+      alamat,
+      estimasi,
+      status,
+      volume,
+      nama_customer,
+      latitude,
+      longitude;
   int driver_id;
 
   @override
@@ -621,7 +634,9 @@ class RC_order extends StatelessWidget {
                   status: status,
                   volume: volume,
                   nama_customer: nama_customer,
-                  driver_id: driver_id)));
+                  driver_id: driver_id,
+                  latitude: latitude,
+                  longitude: longitude)));
         } else {
           await Permission.location.request();
 
@@ -633,7 +648,9 @@ class RC_order extends StatelessWidget {
                   status: status,
                   volume: volume,
                   nama_customer: nama_customer,
-                  driver_id: driver_id)));
+                  driver_id: driver_id,
+                  latitude: latitude,
+                  longitude: longitude)));
         }
       },
       child: Container(

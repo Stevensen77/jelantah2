@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -10,6 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:intl/intl.dart';
+import 'package:http/http.dart' as http;
 
 class Historis_Item_Map extends StatefulWidget {
   final String orderid;
@@ -19,6 +21,8 @@ class Historis_Item_Map extends StatefulWidget {
   var volume;
   var nama_customer;
   var driver_id;
+  var latitude;
+  var longitude;
 
   Historis_Item_Map(
       {required String this.orderid,
@@ -27,20 +31,24 @@ class Historis_Item_Map extends StatefulWidget {
       required String this.status,
       required String this.volume,
       required String this.nama_customer,
-      required int this.driver_id});
+      required int this.driver_id,
+      required String this.latitude,
+      required String this.longitude});
 
   @override
   _Historis_Item_MapState createState() => _Historis_Item_MapState();
 }
 
 class _Historis_Item_MapState extends State<Historis_Item_Map> {
+  Completer<GoogleMapController> _controller = Completer();
+
   final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
   final Set<Marker> _markers = {};
-  Completer<GoogleMapController> _controller = Completer();
 
   var _currentLocation;
   var lng;
   var lat;
+  var token;
   late LatLng currentLocation;
   late LatLng destinationLocation;
   double pinPillPosition = PIN_VISIBLE_POSITION;
@@ -48,8 +56,7 @@ class _Historis_Item_MapState extends State<Historis_Item_Map> {
   bool _loading = true;
 
   var initialCameraPosition;
-  static const LatLng DEST_LOCATION =
-      LatLng(-6.167522793690853, 106.79111424124224);
+  late LatLng DEST_LOCATION = LatLng(0, 0);
 
   static const double CAMERA_ZOOM = 14;
   static const double CAMERA_TILT = 0;
@@ -109,6 +116,10 @@ class _Historis_Item_MapState extends State<Historis_Item_Map> {
       lng = _currentLocation.longitude.toString();
 
       currentLocation = LatLng(double.parse(lat), double.parse(lng));
+      DEST_LOCATION =
+          LatLng(double.parse(widget.latitude), double.parse(widget.longitude));
+      print("ini dest location dari API : " + DEST_LOCATION.toString());
+
       destinationLocation =
           LatLng(DEST_LOCATION.latitude, DEST_LOCATION.longitude);
       _loading = false;
@@ -134,9 +145,46 @@ class _Historis_Item_MapState extends State<Historis_Item_Map> {
 
   getPref() async {
     currentLocation = LatLng(double.parse(lat), double.parse(lng));
+  }
 
-    destinationLocation =
-        LatLng(DEST_LOCATION.latitude, DEST_LOCATION.longitude);
+  pickup_order() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    setState(() {
+      token = (preferences.getString('token'));
+    });
+
+    Map bodi = {"token": token};
+    var body = jsonEncode(bodi);
+    final response = await http.post(
+        Uri.parse(
+            "http://10.0.2.2:8000/api/driver/pickup_orders/${widget.orderid}/approve/post"),
+        body: body);
+    final data = jsonDecode(response.body);
+
+    String status = data['status'];
+    String pesan = data['message'];
+
+    if (status == "success") {
+      setState(() {
+        Navigator.of(context).push(
+            MaterialPageRoute(builder: (context) => Historis_Map_On_Pickup()));
+        savePref(status, pesan);
+      });
+      print("PickupOrderPesan" + pesan);
+      print("PickupOrderStatus" + status);
+    } else {
+      //showAlertDialog(context);
+      print("PickupOrderPesan" + pesan);
+      print("PickupOrderStatus" + status);
+    }
+  }
+
+  savePref(String status, String pesan) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    setState(() {
+      preferences.setString("status", status);
+      preferences.setString("pesan", pesan);
+    });
   }
 
   @override
@@ -364,9 +412,7 @@ class _Historis_Item_MapState extends State<Historis_Item_Map> {
                         child: Center(
                           child: TextButton(
                               onPressed: () {
-                                Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) =>
-                                        Historis_Map_On_Pickup()));
+                                pickup_order();
                               },
                               child: Text('Pick Up Sekarang',
                                   style: TextStyle(color: Colors.white))),
@@ -400,8 +446,10 @@ class _Historis_Item_MapState extends State<Historis_Item_Map> {
       return GoogleMap(
         mapType: MapType.normal,
         polylines: _polylines,
+        zoomGesturesEnabled: true,
         markers: _markers,
         initialCameraPosition: initialCameraPosition,
+        minMaxZoomPreference: MinMaxZoomPreference(6, 19),
         onTap: (LatLng loc) {
           setState(() {
             this.pinPillPosition = PIN_INVISIBLE_POSITION;
