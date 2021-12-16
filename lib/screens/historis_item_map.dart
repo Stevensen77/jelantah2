@@ -17,6 +17,7 @@ class Historis_Item_Map extends StatefulWidget {
   final String orderid;
   var alamat;
   var estimasi;
+  var created_at;
   var status;
   var volume;
   var nama_customer;
@@ -28,6 +29,7 @@ class Historis_Item_Map extends StatefulWidget {
       {required String this.orderid,
       required String this.alamat,
       required String this.estimasi,
+      required String this.created_at,
       required String this.status,
       required String this.volume,
       required String this.nama_customer,
@@ -166,8 +168,10 @@ class _Historis_Item_MapState extends State<Historis_Item_Map> {
 
     if (status == "success") {
       setState(() {
-        Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => Historis_Map_On_Pickup()));
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => Historis_Map_On_Pickup(
+                  orderid: widget.orderid,
+                )));
         savePref(status, pesan);
       });
       print("PickupOrderPesan" + pesan);
@@ -187,11 +191,19 @@ class _Historis_Item_MapState extends State<Historis_Item_Map> {
     });
   }
 
+  formatTanggal(tanggal) {
+    var datestring = tanggal.toString();
+    DateTime parseDate =
+        new DateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").parse(datestring);
+    var inputDate = DateTime.parse(parseDate.toString());
+    var outputFormat = DateFormat("d MMMM yyyy", "id_ID");
+    var outputDate = outputFormat.format(inputDate);
+    return outputDate;
+  }
+
   @override
   Widget build(BuildContext context) {
-    DateTime tgl_sementara =
-        new DateFormat("yyyy-MM-dd hh:mm:ss").parse(widget.estimasi);
-    var formattedDate = formatter.format(tgl_sementara);
+    String tanggal_created_order = formatTanggal(widget.created_at);
 
     return Center(
       child: Container(
@@ -266,7 +278,7 @@ class _Historis_Item_MapState extends State<Historis_Item_Map> {
                             width: 50,
                           ),
                           Text(
-                            " ${formattedDate}",
+                            tanggal_created_order,
                             style: TextStyle(
                               fontSize: 20,
                               color: Color(0xff70AFE5),

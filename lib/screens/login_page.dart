@@ -270,12 +270,19 @@ class _LoginPageState extends State<LoginPage> {
                                                       color: Colors.grey,
                                                       fontSize: 16),
                                                 ),
-                                                Text(
-                                                  "Daftar",
-                                                  style: TextStyle(
-                                                      color: Colors.blue,
-                                                      fontSize: 16),
-                                                ),
+                                                GestureDetector(
+                                                    onTap: () {
+                                                      Navigator.of(context).push(
+                                                          MaterialPageRoute(
+                                                              builder: (context) =>
+                                                                  Register()));
+                                                    },
+                                                    child: Text(
+                                                      "Daftar",
+                                                      style: TextStyle(
+                                                          color: Colors.blue,
+                                                          fontSize: 16),
+                                                    )),
                                               ],
                                             )
                                           ],

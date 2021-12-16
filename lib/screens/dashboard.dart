@@ -71,6 +71,7 @@ class _DashboardState extends State<Dashboard> {
   var pickup_date = [];
   var estimate_volume = [];
   var estimasi = [];
+  var created_at = [];
   var status = [];
   var longitude = [];
   var latitude = [];
@@ -105,6 +106,7 @@ class _DashboardState extends State<Dashboard> {
         nama_customer.add(data['pickup_orders']['data'][i]['recipient_name']);
         driver_id.add(data['pickup_orders']['data'][i]['driver_id']);
         pickup_date.add(data['pickup_orders']['data'][i]['pickup_date']);
+        created_at.add(data['pickup_orders']['data'][i]['created_at']);
         estimate_volume.add(
             data['pickup_orders']['data'][i]['estimate_volume'].toString());
         status.add(data['pickup_orders']['data'][i]['status']);
@@ -243,7 +245,8 @@ class _DashboardState extends State<Dashboard> {
                           ),
                         ],
                       ),
-                      Row(
+
+                      /* Row(
                         children: [
                           IconButton(
                             onPressed: () {
@@ -275,7 +278,7 @@ class _DashboardState extends State<Dashboard> {
                             ),
                           )
                         ],
-                      )
+                      )*/
                     ],
                   ),
                 ),
@@ -349,6 +352,7 @@ class _DashboardState extends State<Dashboard> {
                                   driver_id: driver_id[i],
                                   alamat: address[i],
                                   estimasi: pickup_date[i],
+                                  created_at: created_at[i],
                                   status: status[i],
                                   volume: estimate_volume[i],
                                   latitude: latitude[i],
@@ -470,7 +474,7 @@ class _DashboardState extends State<Dashboard> {
                   Navigator.push(
                     context,
                     PageRouteBuilder(
-                      pageBuilder: (c, a1, a2) => Tutorial(),
+                      pageBuilder: (c, a1, a2) => Account(),
                       transitionsBuilder: (c, anim, a2, child) =>
                           FadeTransition(opacity: anim, child: child),
                       transitionDuration: Duration(milliseconds: 300),
@@ -606,6 +610,7 @@ class RC_order extends StatelessWidget {
       required this.status,
       required this.volume,
       required this.estimasi,
+      required this.created_at,
       required this.nama_customer,
       required this.driver_id,
       required this.latitude,
@@ -620,6 +625,7 @@ class RC_order extends StatelessWidget {
       latitude,
       longitude;
   int driver_id;
+  var created_at;
 
   @override
   Widget build(BuildContext context) {
@@ -631,6 +637,7 @@ class RC_order extends StatelessWidget {
                   orderid: orderid,
                   alamat: alamat,
                   estimasi: estimasi,
+                  created_at: created_at,
                   status: status,
                   volume: volume,
                   nama_customer: nama_customer,
@@ -645,6 +652,7 @@ class RC_order extends StatelessWidget {
                   orderid: orderid,
                   alamat: alamat,
                   estimasi: estimasi,
+                  created_at: created_at,
                   status: status,
                   volume: volume,
                   nama_customer: nama_customer,
