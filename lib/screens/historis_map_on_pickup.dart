@@ -6,10 +6,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:jelantah/screens/historis_item_selesai.dart';
-import 'package:jelantah/screens/historis_map_input_penerima.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:jelantah/screens/historis_map_pembatalan.dart';
+import 'package:jelantah/screens/historis_item_batal.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:intl/intl.dart';
@@ -26,6 +25,7 @@ class Historis_Map_On_Pickup extends StatefulWidget {
 
 class _Historis_Map_On_PickupState extends State<Historis_Map_On_Pickup> {
   Completer<GoogleMapController> _controller = Completer();
+  final _key = new GlobalKey<FormState>();
 
   final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
   final Set<Marker> _markers = {};
@@ -68,7 +68,10 @@ class _Historis_Map_On_PickupState extends State<Historis_Map_On_Pickup> {
   var latitude;
   var i;
   var nama_driver;
-  var input_penerima, input_volume_timbang;
+  late String input_penerima, input_volume_timbang, input_alasan;
+  late TextEditingController _c = TextEditingController(),
+      _d = TextEditingController(),
+      _alasan = TextEditingController();
 
   //LatLng _currentPosition = LatLng(-6.168128517426338, 106.79157069327144);
 
@@ -188,37 +191,81 @@ class _Historis_Map_On_PickupState extends State<Historis_Map_On_Pickup> {
     print("Nama driver : " + nama_driver);
   }
 
-  pickup_order() async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    setState(() {
-      token = (preferences.getString('token'));
-    });
+  check() {
+    final form = _key.currentState;
+    if (form!.validate()) {
+      form.save();
+      selesaikan();
+    } else {
+      print("gagal");
+    }
+  }
 
-    Map bodi = {"token": token};
+  check_pembatalan() {
+    final form = _key.currentState;
+    if (form!.validate()) {
+      form.save();
+      pembatalan();
+    } else {
+      print("gagal");
+    }
+  }
+
+  selesaikan() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    token = preferences.getString("token");
+
+    Map bodi = {
+      "token": token,
+      "real_recipient_name": input_penerima,
+      "weighing_volume": input_volume_timbang
+    };
     var body = jsonEncode(bodi);
     final response = await http.post(
         Uri.parse(
-            "http://10.0.2.2:8000/api/driver/pickup_orders/${widget.orderid}/approve/post"),
+            "http://10.0.2.2:8000/api/driver/pickup_orders/${widget.orderid}/close/post"),
         body: body);
     final data = jsonDecode(response.body);
 
     String status = data['status'];
-    String pesan = data['message'];
+    String message = data['message'];
+    print("Ini status SELESAI : " + status);
 
     if (status == "success") {
       setState(() {
         Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => Historis_Map_On_Pickup(
-                  orderid: widget.orderid,
-                )));
-        savePref(status, pesan);
+            builder: (context) =>
+                Historis_Item_Selesai(orderid: widget.orderid)));
       });
-      print("PickupOrderPesan" + pesan);
-      print("PickupOrderStatus" + status);
     } else {
-      //showAlertDialog(context);
-      print("PickupOrderPesan" + pesan);
-      print("PickupOrderStatus" + status);
+      print(message);
+    }
+  }
+
+  pembatalan() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    token = preferences.getString("token");
+
+    Map bodi = {"token": token, "cancel_reason": input_alasan};
+    var body = jsonEncode(bodi);
+    final response = await http.post(
+        Uri.parse(
+            "http://10.0.2.2:8000/api/driver/pickup_orders/${widget.orderid}/cancel/post"),
+        body: body);
+    final data = jsonDecode(response.body);
+
+    String status = data['status'];
+    String message = data['message'];
+    print("Ini status PEMBATALAN : " + status);
+
+    if (status == "success") {
+      setState(() {
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) =>
+                Historis_Map_Pembatalan(orderid: widget.orderid)));
+      });
+    } else {
+      print(message);
     }
   }
 
@@ -435,153 +482,168 @@ class _Historis_Map_On_PickupState extends State<Historis_Map_On_Pickup> {
                       SizedBox(
                         height: 10,
                       ),
-                      GestureDetector(
-                        child: Container(
-                            decoration: BoxDecoration(
-                              color: Color(0xff125894),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Center(
-                              child: TextButton(
-                                  onPressed: () {
-                                    showModalBottomSheet(
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.only(
-                                              topLeft: Radius.circular(45),
-                                              topRight: Radius.circular(45)),
-                                        ),
-                                        backgroundColor: Colors.white,
-                                        context: context,
-                                        builder: (context) {
-                                          return Container(
-                                            padding: EdgeInsets.all(30),
-                                            child: Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .center,
-                                                      children: [
-                                                        Container(
-                                                          width: 50,
-                                                          child: Divider(
-                                                            color: Colors.blue,
-                                                            thickness: 5,
+                      Form(
+                        key: _key,
+                        child: GestureDetector(
+                          child: Container(
+                              decoration: BoxDecoration(
+                                color: Color(0xff125894),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Center(
+                                child: TextButton(
+                                    onPressed: () {
+                                      showModalBottomSheet(
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.only(
+                                                topLeft: Radius.circular(45),
+                                                topRight: Radius.circular(45)),
+                                          ),
+                                          backgroundColor: Colors.white,
+                                          context: context,
+                                          builder: (context) {
+                                            return Container(
+                                              padding: EdgeInsets.all(30),
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        children: [
+                                                          Container(
+                                                            width: 50,
+                                                            child: Divider(
+                                                              color:
+                                                                  Colors.blue,
+                                                              thickness: 5,
+                                                            ),
                                                           ),
+                                                        ],
+                                                      ),
+                                                      SizedBox(
+                                                        height: 15,
+                                                      ),
+                                                      Container(
+                                                        child: Divider(
+                                                            color: Colors.blue),
+                                                      ),
+                                                      SizedBox(
+                                                        height: 15,
+                                                      ),
+                                                      Text(
+                                                        'Penerima *',
+                                                        style: TextStyle(
+                                                          fontSize: 20,
+                                                          color: Colors.black,
+                                                          fontWeight:
+                                                              FontWeight.bold,
                                                         ),
-                                                      ],
-                                                    ),
-                                                    SizedBox(
-                                                      height: 15,
-                                                    ),
-                                                    Container(
-                                                      child: Divider(
-                                                          color: Colors.blue),
-                                                    ),
-                                                    SizedBox(
-                                                      height: 15,
-                                                    ),
-                                                    Text(
-                                                      'Penerima *',
-                                                      style: TextStyle(
-                                                        fontSize: 20,
-                                                        color: Colors.black,
-                                                        fontWeight:
-                                                            FontWeight.bold,
                                                       ),
-                                                    ),
-                                                    TextFormField(
-                                                      style: TextStyle(
-                                                          color: Color(
-                                                              0xff283c71)),
-                                                      onSaved: (e) =>
-                                                          input_penerima = e!,
-                                                      decoration:
-                                                          InputDecoration(
-                                                        hintText:
-                                                            "Masukan nama penerima..",
+                                                      TextFormField(
+                                                        style: TextStyle(
+                                                            color: Color(
+                                                                0xff283c71)),
+                                                        validator: (e) {
+                                                          if (e!.isEmpty) {
+                                                            return "Please insert penerima";
+                                                          }
+                                                        },
+                                                        onSaved: (e) =>
+                                                            input_penerima = e!,
+                                                        decoration:
+                                                            InputDecoration(
+                                                          hintText:
+                                                              "Masukan nama penerima..",
+                                                        ),
+                                                        controller: _c,
                                                       ),
-                                                      validator: (e) {
-                                                        if (e!.isEmpty) {
-                                                          return "Please insert penerima";
-                                                        }
-                                                      },
-                                                    ),
-                                                    SizedBox(
-                                                      height: 15,
-                                                    ),
-                                                    Text(
-                                                      'Total Volume Timbang *',
-                                                      style: TextStyle(
-                                                        fontSize: 20,
-                                                        color: Colors.black,
-                                                        fontWeight:
-                                                            FontWeight.bold,
+                                                      SizedBox(
+                                                        height: 15,
                                                       ),
-                                                    ),
-                                                    TextFormField(
-                                                      style: TextStyle(
-                                                          color: Color(
-                                                              0xff283c71)),
-                                                      onSaved: (e) =>
-                                                          input_volume_timbang =
-                                                              e!,
-                                                      decoration:
-                                                          InputDecoration(
-                                                        hintText:
-                                                            "Masukan volume timbang..",
+                                                      Text(
+                                                        'Total Volume Timbang *',
+                                                        style: TextStyle(
+                                                          fontSize: 20,
+                                                          color: Colors.black,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
                                                       ),
-                                                      validator: (e) {
-                                                        if (e!.isEmpty) {
-                                                          return "Please insert volume";
-                                                        }
-                                                      },
-                                                    ),
-                                                  ],
-                                                ),
-                                                Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment
-                                                          .stretch,
-                                                  children: [
-                                                    Container(
-                                                      height: 50,
-                                                      decoration: BoxDecoration(
-                                                        color:
-                                                            Color(0xff125894),
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(10),
+                                                      TextFormField(
+                                                        style: TextStyle(
+                                                            color: Color(
+                                                                0xff283c71)),
+                                                        onSaved: (e) =>
+                                                            input_volume_timbang =
+                                                                e!,
+                                                        decoration:
+                                                            InputDecoration(
+                                                          hintText:
+                                                              "Masukan volume timbang..",
+                                                        ),
+                                                        controller: _d,
+                                                        validator: (e) {
+                                                          if (e!.isEmpty) {
+                                                            return "Please insert volume";
+                                                          }
+                                                        },
                                                       ),
-                                                      child: TextButton(
-                                                          onPressed: () {
-                                                            showAlertDialog(
-                                                                context);
-                                                          },
-                                                          child: Text(
-                                                              'Selesai Pengambilan',
-                                                              style: TextStyle(
-                                                                  color: Colors
-                                                                      .white))),
-                                                    ),
-                                                  ],
-                                                )
-                                              ],
-                                            ),
-                                          );
-                                        });
-                                  },
-                                  child: Text('Selesai',
-                                      style: TextStyle(
-                                          color: Colors.white, fontSize: 20))),
-                            )),
+                                                    ],
+                                                  ),
+                                                  Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .stretch,
+                                                    children: [
+                                                      Container(
+                                                        height: 50,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color:
+                                                              Color(0xff125894),
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(10),
+                                                        ),
+                                                        child: TextButton(
+                                                            onPressed: () {
+                                                              setState(() {
+                                                                input_penerima =
+                                                                    _c.text;
+                                                                input_volume_timbang =
+                                                                    _d.text;
+                                                              });
+                                                              showAlertDialog(
+                                                                  context);
+                                                            },
+                                                            child: Text(
+                                                                'Selesai Pengambilan',
+                                                                style: TextStyle(
+                                                                    color: Colors
+                                                                        .white))),
+                                                      ),
+                                                    ],
+                                                  )
+                                                ],
+                                              ),
+                                            );
+                                          });
+                                    },
+                                    child: Text('Selesai',
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 20))),
+                              )),
+                        ),
                       ),
                       SizedBox(
                         height: 10,
@@ -647,12 +709,12 @@ class _Historis_Map_On_PickupState extends State<Historis_Map_On_Pickup> {
                                                         color:
                                                             Color(0xff283c71)),
                                                     onSaved: (e) =>
-                                                        input_volume_timbang =
-                                                            e!,
+                                                        input_alasan = e!,
                                                     decoration: InputDecoration(
                                                       hintText:
                                                           "Masukan alasan..",
                                                     ),
+                                                    controller: _alasan,
                                                     validator: (e) {
                                                       if (e!.isEmpty) {
                                                         return "Please insert reason";
@@ -675,7 +737,7 @@ class _Historis_Map_On_PickupState extends State<Historis_Map_On_Pickup> {
                                                     ),
                                                     child: TextButton(
                                                         onPressed: () {
-                                                          showAlertDialog(
+                                                          showAlertDialog_pembatalan(
                                                               context);
                                                         },
                                                         child: Text(
@@ -799,16 +861,48 @@ class _Historis_Map_On_PickupState extends State<Historis_Map_On_Pickup> {
     Widget continueButton = TextButton(
       child: Text("Ya"),
       onPressed: () {
-        Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) =>
-                Historis_Item_Selesai(orderid: widget.orderid)));
+        check();
       },
     );
 
     // set up the AlertDialog
     AlertDialog alert = AlertDialog(
-      title: Text("Log Out"),
-      content: Text("Apakah anda ingin keluar dari apps?"),
+      title: Text("Selesaikan order"),
+      content: Text("Apakah ingin menyelesaikan order?"),
+      actions: [
+        cancelButton,
+        continueButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
+  void showAlertDialog_pembatalan(BuildContext context) {
+    // set up the buttons
+    Widget cancelButton = TextButton(
+      child: Text("Tidak"),
+      onPressed: () {
+        Navigator.of(context).pop();
+      },
+    );
+    Widget continueButton = TextButton(
+      child: Text("Ya"),
+      onPressed: () {
+        check_pembatalan();
+      },
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text("Batalkan order"),
+      content: Text("Apakah ingin membatalkan order?"),
       actions: [
         cancelButton,
         continueButton,
