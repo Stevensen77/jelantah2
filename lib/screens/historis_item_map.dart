@@ -201,9 +201,20 @@ class _Historis_Item_MapState extends State<Historis_Item_Map> {
     return outputDate;
   }
 
+  formatTanggalPickup(tanggal) {
+    var datestring = tanggal.toString();
+    DateTime parseDate =
+        new DateFormat("yyyy-MM-dd' 'HH:mm:ss").parse(datestring);
+    var inputDate = DateTime.parse(parseDate.toString());
+    var outputFormat = DateFormat("d MMMM yyyy", "id_ID");
+    var outputDate = outputFormat.format(inputDate);
+    return outputDate;
+  }
+
   @override
   Widget build(BuildContext context) {
     String tanggal_created_order = formatTanggal(widget.created_at);
+    String tanggal_pickup_order = formatTanggalPickup(widget.estimasi);
 
     return Center(
       child: Container(
@@ -318,7 +329,7 @@ class _Historis_Item_MapState extends State<Historis_Item_Map> {
                         ),
                       ),
                       Text(
-                        " ${widget.estimasi}",
+                        tanggal_pickup_order,
                         style: TextStyle(
                           fontSize: 18,
                           color: Color(0xff002B50),

@@ -42,7 +42,7 @@ class _Historis_Item_BatalState extends State<Historis_Item_Batal> {
     };
     var body = json.encode(bodi);
     final response = await http.post(
-      Uri.parse("http://127.0.0.1:8000/api/admin/cities/$idcity/get"),
+      Uri.parse("http://10.0.2.2:8000/api/driver/cities/$idcity/get"),
       body: body,
     );
     final data = jsonDecode(response.body);
@@ -69,7 +69,7 @@ class _Historis_Item_BatalState extends State<Historis_Item_Batal> {
     };
     var body = json.encode(bodi);
     final response = await http.post(
-      Uri.parse("http://127.0.0.1:8000/api/admin/drivers/$idDriver/get"),
+      Uri.parse("http://10.0.2.2:8000/api/drivers/$idDriver/get"),
       body: body,
     );
     final data = jsonDecode(response.body);
@@ -100,7 +100,7 @@ class _Historis_Item_BatalState extends State<Historis_Item_Batal> {
     };
     var body = json.encode(bodi);
     final response = await http.post(
-      Uri.parse("http://127.0.0.1:8000/api/admin/pickup_orders/$orderid/get"),
+      Uri.parse("http://10.0.2.2:8000/api/driver/pickup_orders/$orderid/get"),
       body: body,
     );
     final data = jsonDecode(response.body);
