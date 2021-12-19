@@ -7,8 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:intl/intl.dart';
 import 'package:jelantah/screens/account.dart';
-import 'package:jelantah/screens/historis.dart';
+
 import 'package:jelantah/screens/login_page.dart';
+import 'package:jelantah/screens/main_history_semua.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:jelantah/screens/chat_list.dart';
 import 'package:http/http.dart' as http;

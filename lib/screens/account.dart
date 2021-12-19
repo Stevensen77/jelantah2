@@ -3,11 +3,12 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:jelantah/screens/main_history_semua.dart';
 //import 'package:jelantah/screens/pengaturan.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:jelantah/screens/login_page.dart';
-import 'package:jelantah/screens/historis.dart';
+
 import 'package:jelantah/screens/chat_list.dart';
 import 'package:http/http.dart' as http;
 
@@ -15,6 +16,8 @@ class Account extends StatefulWidget {
   @override
   _AccountState createState() => _AccountState();
 }
+
+enum LoginStatus { notSignIn, signIn }
 
 class _AccountState extends State<Account> {
   int _selectedNavbar = 3;

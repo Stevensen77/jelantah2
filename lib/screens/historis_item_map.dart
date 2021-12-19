@@ -426,19 +426,24 @@ class _Historis_Item_MapState extends State<Historis_Item_Map> {
                       SizedBox(
                         height: 15,
                       ),
-                      Container(
-                        height: 50,
-                        decoration: BoxDecoration(
-                          color: Color(0xff125894),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Center(
-                          child: TextButton(
-                              onPressed: () {
-                                pickup_order();
-                              },
-                              child: Text('Pick Up Sekarang',
-                                  style: TextStyle(color: Colors.white))),
+                      GestureDetector(
+                        onTap: () {
+                          pickup_order();
+                        },
+                        child: Container(
+                          height: 50,
+                          decoration: BoxDecoration(
+                            color: Color(0xff125894),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Center(
+                            child: TextButton(
+                                onPressed: () {
+                                  pickup_order();
+                                },
+                                child: Text('Pick Up Sekarang',
+                                    style: TextStyle(color: Colors.white))),
+                          ),
                         ),
                       ),
                     ],

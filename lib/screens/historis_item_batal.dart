@@ -4,7 +4,12 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_icons/flutter_icons.dart';
 import 'package:intl/intl.dart';
+import 'package:jelantah/screens/account.dart';
+import 'package:jelantah/screens/chat_list.dart';
+import 'package:jelantah/screens/login_page.dart';
+import 'package:jelantah/screens/main_history_semua.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
@@ -35,6 +40,14 @@ class _Historis_Item_BatalState extends State<Historis_Item_Batal> {
   var total_price = "";
   var i;
   var cancel_reason = "";
+
+  int _selectedNavbar = 0;
+
+  void _changeSelectedNavBar(int index) {
+    setState(() {
+      _selectedNavbar = index;
+    });
+  }
 
   get_CityID(idcity) async {
     Map bodi = {
@@ -411,6 +424,79 @@ class _Historis_Item_BatalState extends State<Historis_Item_Batal> {
                 ),
               ),
             ],
+          ),
+          bottomNavigationBar: BottomNavigationBar(
+            type: BottomNavigationBarType.fixed,
+            items: const <BottomNavigationBarItem>[
+              BottomNavigationBarItem(
+                icon: Icon(Icons.home_outlined),
+                title: Text('Beranda'),
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(FlutterIcons.file_text_o_faw),
+                title: Text('Riwayat'),
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.chat_outlined),
+                title: Text('Pesan'),
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.person_outline),
+                title: Text('Profil'),
+              ),
+            ],
+            currentIndex: _selectedNavbar,
+            selectedItemColor: Colors.blue,
+            unselectedItemColor: Colors.blueGrey,
+            showUnselectedLabels: true,
+            onTap: (index) {
+              switch (index) {
+                case 0:
+                  Navigator.push(
+                    context,
+                    PageRouteBuilder(
+                      pageBuilder: (c, a1, a2) => LoginPage(),
+                      transitionsBuilder: (c, anim, a2, child) =>
+                          FadeTransition(opacity: anim, child: child),
+                      transitionDuration: Duration(milliseconds: 200),
+                    ),
+                  );
+                  break;
+                case 1:
+                  Navigator.push(
+                    context,
+                    PageRouteBuilder(
+                      pageBuilder: (c, a1, a2) => Historis(),
+                      transitionsBuilder: (c, anim, a2, child) =>
+                          FadeTransition(opacity: anim, child: child),
+                      transitionDuration: Duration(milliseconds: 300),
+                    ),
+                  );
+                  break;
+                case 2:
+                  Navigator.push(
+                    context,
+                    PageRouteBuilder(
+                      pageBuilder: (c, a1, a2) => ChatList(),
+                      transitionsBuilder: (c, anim, a2, child) =>
+                          FadeTransition(opacity: anim, child: child),
+                      transitionDuration: Duration(milliseconds: 300),
+                    ),
+                  );
+                  break;
+                case 3:
+                  Navigator.push(
+                    context,
+                    PageRouteBuilder(
+                      pageBuilder: (c, a1, a2) => Account(),
+                      transitionsBuilder: (c, anim, a2, child) =>
+                          FadeTransition(opacity: anim, child: child),
+                      transitionDuration: Duration(milliseconds: 300),
+                    ),
+                  );
+                  break;
+              }
+            },
           ),
         ),
       ),

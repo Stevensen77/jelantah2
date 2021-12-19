@@ -5,14 +5,14 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:jelantah/screens/historis_item_map.dart';
-
+import 'package:jelantah/screens/main_history_proses.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:jelantah/screens/permintaan_penjemputan.dart';
 import 'package:jelantah/screens/user_baru.dart';
-import 'package:jelantah/screens/setting_data_master.dart';
+import 'package:jelantah/screens/main_history_proses.dart';
 import 'package:jelantah/screens/account.dart';
 import 'package:jelantah/screens/login_page.dart';
-import 'package:jelantah/screens/historis.dart';
+import 'package:jelantah/screens/main_history_semua.dart';
 import 'package:jelantah/screens/chat_list.dart';
 import 'package:jelantah/screens/tutorial.dart';
 import 'package:intl/intl.dart';
@@ -321,8 +321,7 @@ class _DashboardState extends State<Dashboard> {
                           RawMaterialButton(
                             onPressed: () {
                               Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) =>
-                                      PermintaanPenjemputan()));
+                                  builder: (context) => Historis()));
                             },
                             child: Text(
                               'Lihat semua',

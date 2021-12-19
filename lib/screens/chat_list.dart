@@ -1,25 +1,42 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:jelantah/screens/main_history_semua.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:jelantah/screens/login_page.dart';
-import 'package:jelantah/screens/historis.dart';
+
 import 'package:jelantah/screens/chat_list.dart';
 import 'package:jelantah/screens/tutorial.dart';
 
 class ChatList extends StatefulWidget {
-
   @override
   _ChatListState createState() => _ChatListState();
 }
 
 class _ChatListState extends State<ChatList> {
-
   int _selectedNavbar = 2;
 
-  var nama = ["Daniel Ardian","Muhamad Ichsan","Dimas Adi","Steven Sen","Daniel Ardian"];
-  var notelp = ["08787876667","08111112121","08111112121","08111112121","08111112121"];
-  var alamat = ["Jalan Cut Meutia No 1, Jakarta Barat, 11146","Tanjung Gedong","Tanjung Gedong","Tanjung Gedong","Tanjung Gedong"];
+  var nama = [
+    "Daniel Ardian",
+    "Muhamad Ichsan",
+    "Dimas Adi",
+    "Steven Sen",
+    "Daniel Ardian"
+  ];
+  var notelp = [
+    "08787876667",
+    "08111112121",
+    "08111112121",
+    "08111112121",
+    "08111112121"
+  ];
+  var alamat = [
+    "Jalan Cut Meutia No 1, Jakarta Barat, 11146",
+    "Tanjung Gedong",
+    "Tanjung Gedong",
+    "Tanjung Gedong",
+    "Tanjung Gedong"
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -35,9 +52,15 @@ class _ChatListState extends State<ChatList> {
               child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    SizedBox(height: 20,),
-                    for(var i = 0; i < nama.length; i++)
-                      RC_ChatList(nama: nama[i], notelp: notelp[i], alamat: alamat[i],)
+                    SizedBox(
+                      height: 20,
+                    ),
+                    for (var i = 0; i < nama.length; i++)
+                      RC_ChatList(
+                        nama: nama[i],
+                        notelp: notelp[i],
+                        alamat: alamat[i],
+                      )
 
                     // RC_ChatList(nama: 'Dabiel Ardian', notelp: '08787876667', alamat: 'Jalan Cut Meutia No 1, Jakarta Barat, 11146',),
                     // RC_ChatList(nama: 'Muhamad Ichsan', notelp: '08111112121', alamat: 'Tanjung Gedong',),
@@ -81,7 +104,8 @@ class _ChatListState extends State<ChatList> {
                         context,
                         PageRouteBuilder(
                           pageBuilder: (c, a1, a2) => LoginPage(),
-                          transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
+                          transitionsBuilder: (c, anim, a2, child) =>
+                              FadeTransition(opacity: anim, child: child),
                           transitionDuration: Duration(milliseconds: 200),
                         ),
                       );
@@ -91,7 +115,8 @@ class _ChatListState extends State<ChatList> {
                         context,
                         PageRouteBuilder(
                           pageBuilder: (c, a1, a2) => Historis(),
-                          transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
+                          transitionsBuilder: (c, anim, a2, child) =>
+                              FadeTransition(opacity: anim, child: child),
                           transitionDuration: Duration(milliseconds: 300),
                         ),
                       );
@@ -101,7 +126,8 @@ class _ChatListState extends State<ChatList> {
                         context,
                         PageRouteBuilder(
                           pageBuilder: (c, a1, a2) => ChatList(),
-                          transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
+                          transitionsBuilder: (c, anim, a2, child) =>
+                              FadeTransition(opacity: anim, child: child),
                           transitionDuration: Duration(milliseconds: 300),
                         ),
                       );
@@ -111,7 +137,8 @@ class _ChatListState extends State<ChatList> {
                         context,
                         PageRouteBuilder(
                           pageBuilder: (c, a1, a2) => Tutorial(),
-                          transitionsBuilder: (c, anim, a2, child) => FadeTransition(opacity: anim, child: child),
+                          transitionsBuilder: (c, anim, a2, child) =>
+                              FadeTransition(opacity: anim, child: child),
                           transitionDuration: Duration(milliseconds: 300),
                         ),
                       );
@@ -128,7 +155,6 @@ class _ChatListState extends State<ChatList> {
 }
 
 class RC_ChatList extends StatelessWidget {
-
   RC_ChatList({required this.nama, required this.notelp, required this.alamat});
 
   String nama, notelp, alamat;

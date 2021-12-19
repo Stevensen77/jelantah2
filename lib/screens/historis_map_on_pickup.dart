@@ -114,7 +114,7 @@ class _Historis_Map_On_PickupState extends State<Historis_Map_On_Pickup> {
   getUserLocation() async {
     _currentLocation = await locateUser();
     // if (mounted) {
-    setState(() async {
+    setState(() {
       /* _currentPosition =
           LatLng(currentLocation.latitude, currentLocation.longitude);*/
       lat = _currentLocation.latitude.toString();
