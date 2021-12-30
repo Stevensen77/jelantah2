@@ -74,6 +74,8 @@ class _Historis_Map_On_PickupState extends State<Historis_Map_On_Pickup> {
       _d = TextEditingController(),
       _alasan = TextEditingController();
 
+  late Timer looping_lokasi;
+
   //LatLng _currentPosition = LatLng(-6.168128517426338, 106.79157069327144);
 
   @override
@@ -182,11 +184,15 @@ class _Historis_Map_On_PickupState extends State<Historis_Map_On_Pickup> {
     });
 
     get_nama();
-    Timer.periodic(Duration(seconds: 5), (timer) {
+    looping_lokasi = Timer.periodic(Duration(seconds: 5), (timer) {
       getUserLocation();
       inputLocation();
     });
     //getUserLocation();
+  }
+
+  void stop_update_lokasi() {
+    looping_lokasi.cancel();
   }
 
   get_nama() async {
@@ -221,6 +227,7 @@ class _Historis_Map_On_PickupState extends State<Historis_Map_On_Pickup> {
     if (form!.validate()) {
       form.save();
       selesaikan();
+      stop_update_lokasi();
     } else {
       print("gagal");
     }
@@ -231,6 +238,7 @@ class _Historis_Map_On_PickupState extends State<Historis_Map_On_Pickup> {
     if (form2!.validate()) {
       form2.save();
       pembatalan();
+      stop_update_lokasi();
     } else {
       print("gagal");
     }
