@@ -1,9 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:jelantah/screens/historis_item_selesai.dart';
 
@@ -13,6 +15,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
+import 'dart:ui' as ui;
 
 class Historis_Map_On_Pickup extends StatefulWidget {
   final String orderid;
@@ -75,6 +78,8 @@ class _Historis_Map_On_PickupState extends State<Historis_Map_On_Pickup> {
       _alasan = TextEditingController();
 
   late Timer looping_lokasi;
+  late BitmapDescriptor pinLocationIcon;
+  late final Uint8List markerIcon;
 
   //LatLng _currentPosition = LatLng(-6.168128517426338, 106.79157069327144);
 
@@ -87,8 +92,26 @@ class _Historis_Map_On_PickupState extends State<Historis_Map_On_Pickup> {
 
     polylinePoints = PolylinePoints();
 
+    setCustomMapPin();
+
     // set up initial locations
     //this.setInitialLocation();
+  }
+
+  Future<Uint8List> getBytesFromAsset(String path, int width) async {
+    ByteData data = await rootBundle.load(path);
+    ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(),
+        targetWidth: width);
+    ui.FrameInfo fi = await codec.getNextFrame();
+    return (await fi.image.toByteData(format: ui.ImageByteFormat.png))!
+        .buffer
+        .asUint8List();
+  }
+
+  void setCustomMapPin() async {
+    final Uint8List markerIcon =
+        await getBytesFromAsset('assets/images/delivery.png', 300);
+    pinLocationIcon = BitmapDescriptor.fromBytes(markerIcon);
   }
 
   Future<Position> locateUser() async {
@@ -872,6 +895,7 @@ class _Historis_Map_On_PickupState extends State<Historis_Map_On_Pickup> {
       _markers.add(Marker(
           markerId: MarkerId('sourcePin'),
           position: currentLocation,
+          icon: pinLocationIcon,
           onTap: () {
             setState(() {
               this.userBadgeSelected = true;

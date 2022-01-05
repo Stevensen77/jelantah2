@@ -1,4 +1,5 @@
 # This is a generated file; do not edit or check into version control.
+audioplayers=D:\\JELANTAH\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\audioplayers-0.20.1\\
 flutter_plugin_android_lifecycle=D:\\JELANTAH\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\flutter_plugin_android_lifecycle-2.0.5\\
 geolocator=D:\\JELANTAH\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\geolocator-5.3.2+2\\
 google_api_availability=D:\\JELANTAH\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\google_api_availability-2.0.4\\
@@ -7,6 +8,12 @@ google_maps_flutter_web=D:\\JELANTAH\\flutter\\.pub-cache\\hosted\\pub.dartlang.
 location=D:\\JELANTAH\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\location-4.3.0\\
 location_permissions=D:\\JELANTAH\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\location_permissions-3.0.0+1\\
 location_web=D:\\JELANTAH\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\location_web-3.1.1\\
+path_provider=D:\\JELANTAH\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\path_provider-2.0.8\\
+path_provider_android=D:\\JELANTAH\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\path_provider_android-2.0.11\\
+path_provider_ios=D:\\JELANTAH\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\path_provider_ios-2.0.7\\
+path_provider_linux=D:\\JELANTAH\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\path_provider_linux-2.1.4\\
+path_provider_macos=D:\\JELANTAH\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\path_provider_macos-2.0.4\\
+path_provider_windows=D:\\JELANTAH\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\path_provider_windows-2.0.4\\
 permission_handler=D:\\JELANTAH\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\permission_handler-6.1.3\\
 shared_preferences=D:\\JELANTAH\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\shared_preferences-0.5.7+3\\
 shared_preferences_macos=D:\\JELANTAH\\flutter\\.pub-cache\\hosted\\pub.dartlang.org\\shared_preferences_macos-0.0.1+11\\

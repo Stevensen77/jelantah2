@@ -32,6 +32,8 @@ dependencies:
   flutter_polyline_points: ^1.0.0
   http_parser: ^4.0.0
   location: ^4.3.0
+  chat_bubbles: ^1.1.0
+  audioplayers: ^0.20.1
   google_maps_flutter_web: ^0.3.2
   intl: ^0.17.0
   url_launcher: ^6.0.12

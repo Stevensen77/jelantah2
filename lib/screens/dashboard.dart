@@ -13,7 +13,7 @@ import 'package:jelantah/screens/main_history_proses.dart';
 import 'package:jelantah/screens/account.dart';
 import 'package:jelantah/screens/login_page.dart';
 import 'package:jelantah/screens/main_history_semua.dart';
-import 'package:jelantah/screens/chat_list.dart';
+import 'package:jelantah/screens/chat_customer.dart';
 import 'package:jelantah/screens/tutorial.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -462,7 +462,7 @@ class _DashboardState extends State<Dashboard> {
                   Navigator.push(
                     context,
                     PageRouteBuilder(
-                      pageBuilder: (c, a1, a2) => ChatList(),
+                      pageBuilder: (c, a1, a2) => ChatCustomer(),
                       transitionsBuilder: (c, anim, a2, child) =>
                           FadeTransition(opacity: anim, child: child),
                       transitionDuration: Duration(milliseconds: 300),
